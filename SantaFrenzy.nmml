@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<app title="Santa Frenzy" file="Santa Frenzy" main="WhackAMole" package="com.jbrichardet.noel.santafrenzy" version="1.0.0" company="Jb Richardet" />
+	
+	<window width="320" height="480" fps="30" orientation="portrait" resizable="false" unless="mobile" />
+ 	
+	<set name="BUILD_DIR" value="Export" />
+	
+	<classpath name="Source" />
+	
+	<haxelib name="nme" />
+	<haxelib name="actuate" />
+	
+	<assets path="Assets/images" rename="images"/>
+	<assets path="Assets/sfx" rename="sfx"/>
+	
+	<icon name="Assets/icon.svg" />
+	
+	<ndll name="std" />
+	<ndll name="regexp" />
+	<ndll name="zlib" />
+	<ndll name="nme" haxelib="nme" />
+	
+</project>
