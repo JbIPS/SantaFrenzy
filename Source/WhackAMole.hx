@@ -13,6 +13,8 @@ import nme.events.Event;
 import nme.events.MouseEvent;
 import nme.events.TouchEvent;
 import nme.geom.Point;
+import nme.net.SharedObject;
+import nme.net.SharedObjectFlushStatus;
 import nme.text.TextField;
 import nme.text.TextFormat;
 import nme.text.TextFormatAlign;
@@ -32,6 +34,7 @@ class WhackAMole extends Sprite {
 	private var startTime:Int;
 	private var elapsedTime: Float;
 	private var menu: Array<DisplayObject>;
+	private var highScore: SharedObject;
 	
 	public static var screenRatioX: Float = -1;
 	public static var screenRatioY: Float = -1;
@@ -40,7 +43,8 @@ class WhackAMole extends Sprite {
 	public function new () {
 		
 		super ();
-		initializeGame ();		
+		initializeGame ();	
+		highScore = SharedObject.getLocal("score");
 	}
 	
 	
@@ -93,6 +97,8 @@ class WhackAMole extends Sprite {
 		removeEventListener (Event.ENTER_FRAME, this_onEnterFrame);
 		removeChild(scoreDisplay);
 		
+		var best = saveHighScore();
+		
 		for (mole in moles) {
 			
 			if (mole != null && mole.active) {
@@ -123,6 +129,16 @@ class WhackAMole extends Sprite {
 		scoreText.alpha = 0;
 		Actuate.tween (scoreText, 1, { alpha: 1 } ).delay (0.4);
 		addChild (scoreText);
+		
+		var bestScore: TextField = new TextField();
+		bestScore.defaultTextFormat = scoreFormat;
+		bestScore.y = 305*screenRatioY;
+		bestScore.width = 320 * screenRatioX;
+		bestScore.selectable = bestScore.mouseEnabled = false;
+		bestScore.alpha = 0;
+		Actuate.tween (bestScore, 1, { alpha: 1 } ).delay (0.4);
+		bestScore.text = "Meilleur Score: " + best;
+		addChild(bestScore);
 		
 	}
 	
@@ -364,9 +380,44 @@ class WhackAMole extends Sprite {
 		Lib.exit();
 	}
 	
+	private function saveHighScore() : Int 
+	{
+		var best = Std.parseInt(highScore.data.score);
+		Lib.trace("Saved Score: " + best);
+		
+		if(score > best){
+			highScore.data.score = Std.string(score);
+			best = score;
+		}
+
+			
+		#if ( cpp || neko )
+			var flushStatus:SharedObjectFlushStatus = null;
+		#else
+			var flushStatus:String = null;
+		#end
+	
+		try {
+			flushStatus = highScore.flush() ;
+		} 
+		catch ( e: Dynamic ) {
+			Lib.trace("couldn t write...");
+		}
+		
+		if ( flushStatus != null ) {
+			switch( flushStatus ) {
+				case SharedObjectFlushStatus.PENDING:
+						Lib.trace('requesting permission to save');
+				case SharedObjectFlushStatus.FLUSHED:
+						Lib.trace('value saved');
+			}
+		}
+		Lib.trace("Best: " + best);
+		return best;
+	}
+	
 	
 	public static function main () {
-		
 		Lib.current.addChild (new WhackAMole ());
 		Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);		
 	}
