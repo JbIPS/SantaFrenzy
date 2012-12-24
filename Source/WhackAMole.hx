@@ -383,9 +383,9 @@ class WhackAMole extends Sprite {
 	private function saveHighScore() : Int 
 	{
 		var best = Std.parseInt(highScore.data.score);
-		Lib.trace("Saved Score: " + best);
+		Lib.trace("Saved Score: " + best+", actual score"+score);
 		
-		if(score > best){
+		if(score > (best==null?0:best)){
 			highScore.data.score = Std.string(score);
 			best = score;
 		}

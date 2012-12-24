@@ -3,7 +3,8 @@
 	
 	<app title="Santa Frenzy" file="Santa Frenzy" main="WhackAMole" package="com.jbrichardet.noel.santafrenzy" version="1.0.0" company="Jb Richardet" />
 	
-	<window width="320" height="480" fps="30" orientation="portrait" resizable="false" unless="mobile" />
+	<window width="320" height="480" fps="30" unless="mobile" />
+	<window orientation="portrait" resizable="false"/>
  	
 	<set name="BUILD_DIR" value="Export" />
 	
